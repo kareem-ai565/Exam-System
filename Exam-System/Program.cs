@@ -1,4 +1,7 @@
 
+using Exam_System.Database.Context;
+using Microsoft.EntityFrameworkCore;
+
 namespace Exam_System
 {
     public class Program
@@ -13,6 +16,8 @@ namespace Exam_System
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddDbContext<ExamSysContext>(op => op.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+                
 
             var app = builder.Build();
 

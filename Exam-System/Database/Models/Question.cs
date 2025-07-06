@@ -2,7 +2,7 @@
 
 namespace Exam_System.Database.Models
 {
-    public class Questions
+    public class Question
     {
         public int Id { get; set; }
         public string QuestionText { get; set; }
@@ -11,6 +11,6 @@ namespace Exam_System.Database.Models
         public int ExamId { get; set; }
         public Exam Exam { get; set; }
 
-        public List<Choise> Choises { get; set; } = new List<Choise>();
+        public List<Choice> Choises { get; set; } = new List<Choice>();
     }
 }

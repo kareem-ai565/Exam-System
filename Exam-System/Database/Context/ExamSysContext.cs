@@ -1,6 +1,7 @@
 ﻿using Exam_System.Database.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace Exam_System.Database.Context
 {
@@ -8,11 +9,30 @@ namespace Exam_System.Database.Context
     {
         public ExamSysContext(DbContextOptions<ExamSysContext> options) : base(options)
         {
+           
         }
         public DbSet<Exam> Exams { get; set; }
-        public DbSet<Questions> Questions { get; set; }
-        public DbSet<Choise> Choises { get; set; }
+        public DbSet<Question> Questions { get; set; }
+        public DbSet<Choice> Choises { get; set; }
         public DbSet<UserExamResult> UserExamResults { get; set; }
+
+      
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+
+            builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+            builder.Entity<Question>(e => {
+
+                e.HasOne(q => q.Exam)
+                .WithMany(e => e.Questions)
+                .HasForeignKey(q => q.ExamId);
+
+            });
+
+
+            base.OnModelCreating(builder);
+        }
 
     }
 }

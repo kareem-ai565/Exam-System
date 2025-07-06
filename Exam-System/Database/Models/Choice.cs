@@ -2,7 +2,7 @@
 
 namespace Exam_System.Database.Models
 {
-    public class Choise
+    public class Choice
     {
         public int Id { get; set; }
         public string ChoiseText { get; set; } 
@@ -10,6 +10,6 @@ namespace Exam_System.Database.Models
 
         [ForeignKey(nameof(Questions))]
         public int QuestionsId { get; set; }
-        public Questions Questions { get; set; } 
+        public Question Questions { get; set; } 
     }
 }
