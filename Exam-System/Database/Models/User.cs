@@ -2,7 +2,7 @@
 
 namespace Exam_System.Database.Models
 {
-    public class User : IdentityUser
+    public class User : IdentityUser<Guid>
     {
         public string Name { get; set; } = string.Empty;
 

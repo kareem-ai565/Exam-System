@@ -17,13 +17,13 @@ namespace Exam_System.Database.Configs
             builder.HasOne(uer => uer.Exam)
                 .WithMany(e => e.UserExamResults)
                 .HasForeignKey(uer => uer.ExamId)
-                .IsRequired();
+                ;
 
 
             builder.HasOne(uer => uer.User)
                 .WithMany(u => u.UserExamResults)
                 .HasForeignKey(uer => uer.UserId)
-                .IsRequired();
+                ;
 
         }
     }
