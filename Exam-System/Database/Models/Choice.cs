@@ -8,8 +8,8 @@ namespace Exam_System.Database.Models
         public string ChoiseText { get; set; } 
         public bool IsCorrect { get; set; } 
 
-        [ForeignKey(nameof(Questions))]
-        public int QuestionsId { get; set; }
-        public Question Questions { get; set; } 
+        [ForeignKey(nameof(Question))]
+        public int QuestionId { get; set; }
+        public Question Question { get; set; } 
     }
 }
