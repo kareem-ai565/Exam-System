@@ -21,7 +21,7 @@ namespace Exam_System.Database.Configs
             builder.HasOne(c => c.Question)
                 .WithMany(q => q.Choises)
                 .HasForeignKey(c => c.QuestionId)
-                .IsRequired();
+                ;
         }
     }
 

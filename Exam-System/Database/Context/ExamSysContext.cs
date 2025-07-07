@@ -1,11 +1,12 @@
 ﻿using Exam_System.Database.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
 namespace Exam_System.Database.Context
 {
-    public class ExamSysContext : IdentityDbContext<User>
+    public class ExamSysContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
     {
         public ExamSysContext(DbContextOptions<ExamSysContext> options) : base(options)
         {
@@ -19,6 +20,7 @@ namespace Exam_System.Database.Context
       
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            
 
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
