@@ -18,22 +18,40 @@ namespace Exam_System.Database.Configs
             .IsRequired()
             .HasMaxLength(100);
 
-            builder.Property(e => e.CreatedAt)
-                .IsRequired();
+
 
             builder.HasMany(e => e.Questions)
-            .WithOne(q => q.Exam)
-            .HasForeignKey(q => q.ExamId)
-            .IsRequired();
+            .WithOne(q => q.Exam);
+
+
 
             builder.HasMany(e => e.UserExamResults)
                 .WithOne(uer => uer.Exam)
-                .HasForeignKey(uer => uer.ExamId);
+                ;
 
             builder.HasOne(u => u.User)
                 .WithMany(e => e.CreatedExams)
                 .HasForeignKey(u => u.UserId)
-                .IsRequired();
+                .IsRequired(false);
+                
+
+            builder.HasData(
+                    new Exam
+                    {
+                        Id = 1,
+                        Title = "C# Fundamentals",
+                        Description = "Basic C# exam for beginners.",
+
+                        
+                    },
+                    new Exam
+                    {
+                        Id = 2,
+                        Title = "ASP.NET Core",
+                        Description = "Intermediate ASP.NET Core exam.",
+
+                    }
+                );
 
         }
     }

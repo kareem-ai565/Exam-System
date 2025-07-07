@@ -1,5 +1,10 @@
 
 using Exam_System.Database.Context;
+using Exam_System.Repositories;
+using Exam_System.Repositories.Interfaces;
+using Exam_System.Services;
+using Exam_System.Services.Interfaces;
+using Exam_System.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 
 namespace Exam_System
@@ -17,8 +22,9 @@ namespace Exam_System
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<ExamSysContext>(op => op.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
-                
-
+            builder.Services.AddScoped<IExamService,ExamService>();
+            builder.Services.AddScoped<IUnitOfWork, Exam_System.UnitOfWork.UnitOfWork>();
+            builder.Services.AddScoped(typeof(IGenericRepo<>), typeof(GenericRepo<>));
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
