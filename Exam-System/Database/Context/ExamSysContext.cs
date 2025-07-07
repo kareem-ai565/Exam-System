@@ -22,13 +22,7 @@ namespace Exam_System.Database.Context
 
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
-            builder.Entity<Question>(e => {
-
-                e.HasOne(q => q.Exam)
-                .WithMany(e => e.Questions)
-                .HasForeignKey(q => q.ExamId);
-
-            });
+            
 
 
             base.OnModelCreating(builder);
