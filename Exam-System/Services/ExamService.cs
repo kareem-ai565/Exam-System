@@ -14,16 +14,24 @@ namespace Exam_System.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task Add(Exam exam)
+
+        public async Task<int> AddAsync(AddExamDto exam)
         {
-            await _unitOfWork.ExamRepo.AddAsync(exam);
-          await   _unitOfWork.SaveChangesAsync();
+            
+            var entity = new Exam()
+            {
+                Description = exam.Description,
+                Title = exam.Title,
+
+            };
+            await _unitOfWork.ExamRepo.AddAsync(entity);
+           return await   _unitOfWork.SaveChangesAsync();
         }
 
-        public async Task DeleteExamAsync(Exam exam)
+        public async Task<int> DeleteExamAsync(int id)
         {
-           _unitOfWork.ExamRepo.Delete(exam);
-            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.ExamRepo.Delete(id);
+           return  await _unitOfWork.SaveChangesAsync();
         }
 
         public async Task<ExamDto> GetExamByIdAsync(int id)
@@ -43,10 +51,14 @@ namespace Exam_System.Services
 
         public async Task<IEnumerable<Exam>> GetExamsAsync()=>await _unitOfWork.ExamRepo.GetAllAsync();
 
-        public async Task UpdateExam(Exam exam)
+        public async Task<int> UpdateExam(UpdateExamDto updateExamDto, int id)
         {
+            var exam = await _unitOfWork.ExamRepo.GetByIdAsync(id);
+            exam.Title = updateExamDto.Title;
+            exam.Description = updateExamDto.Description;
+           
              _unitOfWork.ExamRepo.Update(exam);
-            await _unitOfWork.SaveChangesAsync();
+           return  await _unitOfWork.SaveChangesAsync();
         }
 
        

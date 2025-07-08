@@ -7,9 +7,9 @@ namespace Exam_System.Services.Interfaces
     {
         public Task<IEnumerable<Exam>> GetExamsAsync();
         public Task<ExamDto> GetExamByIdAsync(int id);
-        public Task Add(Exam exam);
+        public Task<int> AddAsync(AddExamDto exam);
         
-        public Task DeleteExamAsync(Exam exam);
-        public Task UpdateExam(Exam exam);
+        public Task<int> DeleteExamAsync(int exam);
+        public Task<int> UpdateExam(UpdateExamDto updateExamDto, int id);
     }
 }

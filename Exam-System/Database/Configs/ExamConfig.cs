@@ -41,9 +41,8 @@ namespace Exam_System.Database.Configs
                         Id = 1,
                         Title = "C# Fundamentals",
                         Description = "Basic C# exam for beginners.",
-
                         
-                    },
+                   },
                     new Exam
                     {
                         Id = 2,

@@ -17,7 +17,13 @@ namespace Exam_System.Repositories
             public async Task AddAsync(T entity) => await _dbSet.AddAsync(entity);
 
 
-            public void Delete(T entity) => _dbSet.Remove(entity);
+            public virtual async Task Delete(int id)
+            {
+                 var entity = await _dbSet.FindAsync(id);
+                
+                _dbSet.Remove(entity);
+                
+            }
 
             public async Task<IEnumerable<T>> GetAllAsync() => await _dbSet.AsNoTracking().ToListAsync();
 
