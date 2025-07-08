@@ -2,52 +2,59 @@
 using Exam_System.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-[ApiController]
-[Route("api/[controller]")]
-public class UserExamResultsController : ControllerBase
+namespace Exam_System.Controllers
 {
-    private readonly IUserExamResultService _service;
-
-    public UserExamResultsController(IUserExamResultService service)
+    [ApiController]
+    [Route("api/[controller]")]
+    [Produces("application/json")] // Ensures Swagger uses JSON, not text/plain
+    public class UserExamResultsController : ControllerBase
     {
-        _service = service;
-    }
+        private readonly IUserExamResultService _service;
 
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<UserExamResultDto>>> GetAll()
-    {
-        var results = await _service.GetAllAsync();
-        return Ok(results);
-    }
+        public UserExamResultsController(IUserExamResultService service)
+        {
+            _service = service;
+        }
 
-    [HttpGet("{id}")]
-    public async Task<ActionResult<UserExamResultDto>> GetById(int id)
-    {
-        var result = await _service.GetByIdAsync(id);
-        if (result == null) return NotFound();
-        return Ok(result);
-    }
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var results = await _service.GetAllAsync();
+            return Ok(results);
+        }
 
-    [HttpPost]
-    public async Task<ActionResult<UserExamResultDto>> Create(UserExamResultDto dto)
-    {
-        var created = await _service.CreateAsync(dto);
-        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
-    }
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var result = await _service.GetByIdAsync(id);
+            if (result == null)
+                return NotFound();
+            return Ok(result);
+        }
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, UserExamResultDto dto)
-    {
-        var success = await _service.UpdateAsync(id, dto);
-        if (!success) return NotFound();
-        return NoContent();
-    }
+        [HttpPost]
+        public async Task<IActionResult> Create(UserExamResultDto dto)
+        {
+            var created = await _service.CreateAsync(dto);
+            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+        }
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
-    {
-        var success = await _service.DeleteAsync(id);
-        if (!success) return NotFound();
-        return NoContent();
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, UserExamResultDto dto)
+        {
+            var success = await _service.UpdateAsync(id, dto);
+            if (!success)
+                return NotFound();
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var success = await _service.DeleteAsync(id);
+            if (!success)
+                return NotFound();
+            return NoContent();
+        }
     }
 }
