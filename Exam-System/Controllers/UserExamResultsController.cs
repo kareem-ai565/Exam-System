@@ -6,7 +6,7 @@ namespace Exam_System.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Produces("application/json")] // Ensures Swagger uses JSON, not text/plain
+    //[Produces("application/json")] // Ensures Swagger uses JSON, not text/plain
     public class UserExamResultsController : ControllerBase
     {
         private readonly IUserExamResultService _service;
