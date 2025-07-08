@@ -61,7 +61,14 @@ namespace Exam_System.Services
 
         public async Task<int> Add(QuestionDto questionDto)
         {
-           var question = new Question
+            if (questionDto.Choises.Count(c=>c.IsCorrect) != 1)
+            {
+                return -1;
+            }
+            {
+                
+            }
+            var question = new Question
            {
                QuestionText = questionDto.QuestionText,
                ExamId = questionDto.ExamId,
