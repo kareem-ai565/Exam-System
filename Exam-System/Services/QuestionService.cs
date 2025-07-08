@@ -100,14 +100,25 @@ namespace Exam_System.Services
             return results;
         }
 
-        public Task<int> DeleteQuestionAsync(QuestionDto questionDto)
+        public async Task<int> DeleteQuestionAsync(QuestionDto questionDto)
         {
-            throw new NotImplementedException();
+            await UnitOfWork.QuestionRepo.Delete(questionDto.Id);
+            return await UnitOfWork.SaveChangesAsync();
         }
 
         public Task<int> UpdateQuestion(QuestionDto questionDto)
         {
-            throw new NotImplementedException();
+            var question = new Question
+            {
+                Id = questionDto.Id,
+                QuestionText = questionDto.QuestionText,
+                Choises = questionDto.Choises.Select(c => new Choice
+                {
+                    ChoiseText = c.ChoiseText,
+                    IsCorrect = c.IsCorrect
+                }).ToList()
+            };
+            return UnitOfWork.SaveChangesAsync();
         }
     }
 }
