@@ -6,10 +6,12 @@ namespace Exam_System.Services.Interfaces
     public interface IQuestionService
     {
         public Task<IEnumerable<QuestionDto>> GetQuestionsAsync();
-        //public Task<QuestionDto> GetQuestionByIdAsync(int id);
-        public Task Add(QuestionDto questionDto);
+        public Task<QuestionDto> GetQuestionByIdAsync(int id);
+        public Task<int> Add(QuestionDto questionDto);
 
-        public Task DeleteQuestionAsync(QuestionDto questionDto);
-        public Task UpdateQuestion(QuestionDto questionDto);
+        public Task<int> DeleteQuestionAsync(QuestionDto questionDto);
+        public Task<int> UpdateQuestion(QuestionDto questionDto);
+
+        public Task<IEnumerable<QuestionDto>> GetQuestionsByExamIdAsync(int examId);
     }
 }
