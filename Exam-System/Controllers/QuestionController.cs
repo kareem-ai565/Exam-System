@@ -38,8 +38,13 @@ namespace Exam_System.Controllers
                 return Created();
                 //return CreatedAtAction("GetById", new { id = question.Id });
 
+            }else if (result == -1)
+                return BadRequest("Exactly one choice must be marked as correct.");
+            {
+                return BadRequest("Failed to add question");
             }
-            return BadRequest();
+            
+
         }
 
         [HttpGet("{id:int}")]
@@ -69,14 +74,10 @@ namespace Exam_System.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteQuestion([FromBody] QuestionDto question)
+        public async Task<IActionResult> DeleteQuestion(int id)
         {
-            if (question == null)
-            {
-                return BadRequest("Question cannot be null");
-            }
-            var result = await _questionService.DeleteQuestionAsync(question);
-            return result > 0 ? Ok("Question has been deleted") : BadRequest("Failed to delete question");
+            var result = await _questionService.DeleteQuestionAsync(id);
+            return result > 0 ? Ok("Question has been deleted") : BadRequest($"Failed to delete question: {result} rows affected");
         }
     }
 }

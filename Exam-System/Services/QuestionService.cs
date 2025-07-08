@@ -100,9 +100,9 @@ namespace Exam_System.Services
             return results;
         }
 
-        public async Task<int> DeleteQuestionAsync(QuestionDto questionDto)
+        public async Task<int> DeleteQuestionAsync(int id)
         {
-            await UnitOfWork.QuestionRepo.Delete(questionDto.Id);
+            await UnitOfWork.QuestionRepo.Delete(id);
             return await UnitOfWork.SaveChangesAsync();
         }
 
