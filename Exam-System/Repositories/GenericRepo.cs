@@ -25,10 +25,10 @@ namespace Exam_System.Repositories
                 
             }
 
-            public async Task<IEnumerable<T>> GetAllAsync() => await _dbSet.AsNoTracking().ToListAsync();
+            virtual public async Task<IEnumerable<T>> GetAllAsync() => await _dbSet.AsNoTracking().ToListAsync();
 
 
-            public async Task<T?> GetByIdAsync(int id) => await _dbSet.FindAsync(id);
+            virtual public async Task<T?> GetByIdAsync(int id) => await _dbSet.FindAsync(id);
 
 
             public void Update(T entity) => _dbSet.Update(entity);

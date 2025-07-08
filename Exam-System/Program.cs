@@ -1,11 +1,16 @@
 
 using Exam_System.Database.Context;
+
+
 using Exam_System.Repositories;
 using Exam_System.Repositories.Interfaces;
 using Exam_System.Services;
 using Exam_System.Services.Interfaces;
 using Exam_System.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace Exam_System
 {
@@ -15,6 +20,8 @@ namespace Exam_System
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            var configuration = builder.Configuration;
+
             // Add services to the container.
 
             builder.Services.AddControllers();
@@ -22,9 +29,43 @@ namespace Exam_System
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<ExamSysContext>(op => op.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+
+            builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+
+                    ValidIssuer = configuration["Jwt:Issuer"],
+                    ValidAudience = configuration["Jwt:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"])),
+                    ClockSkew = TimeSpan.Zero
+                };
+
+            });
+
+            builder.Services.AddAuthorization();
+
+            builder.Services.AddControllers();
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
+
+
+
+
             builder.Services.AddScoped<IExamService,ExamService>();
+            builder.Services.AddScoped<IQuestionService,QuestionService>();
             builder.Services.AddScoped<IUnitOfWork, Exam_System.UnitOfWork.UnitOfWork>();
             builder.Services.AddScoped(typeof(IGenericRepo<>), typeof(GenericRepo<>));
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -36,6 +77,7 @@ namespace Exam_System
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 
