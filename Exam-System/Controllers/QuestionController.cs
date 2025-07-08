@@ -1,6 +1,7 @@
 ﻿using Exam_System.Database.Models;
 using Exam_System.Dtos;
 using Exam_System.Services;
+using Exam_System.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,9 +11,9 @@ namespace Exam_System.Controllers
     [ApiController]
     public class QuestionController : ControllerBase
     {
-        private readonly QuestionService _questionService;
+        private readonly IQuestionService _questionService;
 
-        public QuestionController(QuestionService questionService)
+        public QuestionController(IQuestionService questionService)
         {
             _questionService = questionService;
         }
@@ -24,7 +25,8 @@ namespace Exam_System.Controllers
             {
                 return BadRequest("Question cannot be null");
             }
-           if (await _questionService.Add(question) == 1)
+            var result = await _questionService.Add(question);
+           if (await _questionService.Add(question) > 0)
             {
                 return Created();
             }

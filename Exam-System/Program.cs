@@ -62,6 +62,7 @@ namespace Exam_System
 
 
             builder.Services.AddScoped<IExamService,ExamService>();
+            builder.Services.AddScoped<IQuestionService,QuestionService>();
             builder.Services.AddScoped<IUnitOfWork, Exam_System.UnitOfWork.UnitOfWork>();
             builder.Services.AddScoped(typeof(IGenericRepo<>), typeof(GenericRepo<>));
 
