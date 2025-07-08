@@ -61,7 +61,14 @@ namespace Exam_System.Services
 
         public async Task<int> Add(QuestionDto questionDto)
         {
-           var question = new Question
+            if (questionDto.Choises.Count(c=>c.IsCorrect) != 1)
+            {
+                return -1;
+            }
+            {
+                
+            }
+            var question = new Question
            {
                QuestionText = questionDto.QuestionText,
                ExamId = questionDto.ExamId,
@@ -100,14 +107,25 @@ namespace Exam_System.Services
             return results;
         }
 
-        public Task<int> DeleteQuestionAsync(QuestionDto questionDto)
+        public async Task<int> DeleteQuestionAsync(int id)
         {
-            throw new NotImplementedException();
+            await UnitOfWork.QuestionRepo.Delete(id);
+            return await UnitOfWork.SaveChangesAsync();
         }
 
         public Task<int> UpdateQuestion(QuestionDto questionDto)
         {
-            throw new NotImplementedException();
+            var question = new Question
+            {
+                Id = questionDto.Id,
+                QuestionText = questionDto.QuestionText,
+                Choises = questionDto.Choises.Select(c => new Choice
+                {
+                    ChoiseText = c.ChoiseText,
+                    IsCorrect = c.IsCorrect
+                }).ToList()
+            };
+            return UnitOfWork.SaveChangesAsync();
         }
     }
 }
