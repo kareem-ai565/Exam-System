@@ -9,5 +9,6 @@ namespace Exam_System.Repositories
         public ExamRepo(ExamSysContext context) : base(context)
         {
         }
+        
     }
 }
