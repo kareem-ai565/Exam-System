@@ -1,130 +1,74 @@
-﻿using Exam_System.Database;
-using Exam_System.Database.Context;
-using Exam_System.Database.Models;
-using Exam_System.Dtos;
+﻿using Exam_System.Dtos;
+using Exam_System.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
-[ApiController]
-[Route("api/[controller]")]
-public class UserExamResultsController : ControllerBase
+namespace Exam_System.Controllers
 {
-    private readonly ExamSysContext _context;
-
-    public UserExamResultsController(ExamSysContext context)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class UserExamResultController : ControllerBase
     {
-        _context = context;
-    }
+        private readonly IUserExamResultService _service;
 
-    //=========get all
-
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<UserExamResultDto>>> GetAll()
-    {
-        var results = await _context.UserExamResults
-            .Include(x => x.Exam)
-            .Include(x => x.User)
-            .Select(x => new UserExamResultDto
-            {
-                Id = x.Id,
-                ExamId = x.ExamId,
-                Exam = new ExamDto
-                {
-                    Id = x.Exam.Id,
-                    Title = x.Exam.Title,
-                },
-                UserId = x.UserId,
-                UserEmail = x.User.Email,
-                Score = x.Score
-            }).ToListAsync();
-
-        return Ok(results);
-    }
-
-    //========= get by id 
-
-    [HttpGet("{id}")]
-    public async Task<ActionResult<UserExamResultDto>> GetById(int id)
-    {
-        var result = await _context.UserExamResults
-            .Include(x => x.Exam)
-            .Include(x => x.User)
-            .Where(x => x.Id == id)
-            .Select(x => new UserExamResultDto
-            {
-                Id = x.Id,
-                ExamId = x.ExamId,
-                Exam = new ExamDto
-                {
-                    Id = x.Exam.Id,
-                    Title = x.Exam.Title
-                },
-                UserId = x.UserId,
-                UserEmail = x.User.Email,
-                Score = x.Score
-            }).FirstOrDefaultAsync();
-
-        if (result == null) return NotFound();
-
-        return Ok(result);
-    }
-
-    //============create
-
-    [HttpPost]
-    public async Task<ActionResult<UserExamResultDto>> Create(UserExamResultDto dto)
-    {
-        var entity = new UserExamResult
+        public UserExamResultController(IUserExamResultService service)
         {
-            ExamId = dto.ExamId,
-            UserId = dto.UserId,
-            Score = dto.Score
-        };
+            _service = service;
+        }
 
-        _context.UserExamResults.Add(entity);
-        await _context.SaveChangesAsync();
+        //=============== get all
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var results = await _service.GetAllAsync();
+            return Ok(results);
+        }
 
-        dto.Id = entity.Id;
 
-        var exam = await _context.Exams.FindAsync(dto.ExamId);
-        var user = await _context.Users.FindAsync(dto.UserId);
+        // =============== get by id
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(int id)
+        {
+            var result = await _service.GetByIdAsync(id);
+            if (result == null)
+                return NotFound();
 
-        dto.Exam = exam != null ? new ExamDto { Id = exam.Id, Title = exam.Title } : null;
-        dto.UserEmail = user?.Email;
+            return Ok(result);
+        }
 
-        return CreatedAtAction(nameof(GetById), new { id = entity.Id }, dto);
-    }
+        //=============== create
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] UserExamResultDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-    //======== edit
+            var created = await _service.CreateAsync(dto);
+            return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
+        }
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, UserExamResultDto dto)
-    {
-        if (id != dto.Id)
-            return BadRequest("Mismatched ID");
+        //=============== update
+        [HttpPut]
+        public async Task<IActionResult> Update([FromBody] UserExamResultDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-        var entity = await _context.UserExamResults.FindAsync(id);
-        if (entity == null) return NotFound();
+            var success = await _service.UpdateAsync(dto);
+            if (!success)
+                return NotFound();
 
-        entity.ExamId = dto.ExamId;
-        entity.UserId = dto.UserId;
-        entity.Score = dto.Score;
+            return NoContent();
+        }
 
-        await _context.SaveChangesAsync();
-        return NoContent();
-    }
+        // =============== delete
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var success = await _service.DeleteAsync(id);
+            if (!success)
+                return NotFound();
 
-    //======delete ya man
-
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
-    {
-        var entity = await _context.UserExamResults.FindAsync(id);
-        if (entity == null) return NotFound();
-
-        _context.UserExamResults.Remove(entity);
-        await _context.SaveChangesAsync();
-
-        return NoContent();
+            return NoContent();
+        }
     }
 }

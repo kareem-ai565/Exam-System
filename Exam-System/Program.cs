@@ -1,14 +1,13 @@
 
 using Exam_System.Database.Context;
-
-
 using Exam_System.Repositories;
 using Exam_System.Repositories.Interfaces;
 using Exam_System.Services;
+using Exam_System.Services.Implementations;
 using Exam_System.Services.Interfaces;
 using Exam_System.UnitOfWork;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -65,6 +64,7 @@ namespace Exam_System
             builder.Services.AddScoped<IQuestionService,QuestionService>();
             builder.Services.AddScoped<IUnitOfWork, Exam_System.UnitOfWork.UnitOfWork>();
             builder.Services.AddScoped(typeof(IGenericRepo<>), typeof(GenericRepo<>));
+
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowAngularDev", policy =>
@@ -76,6 +76,14 @@ namespace Exam_System
             });
                 var app = builder.Build();
             app.UseCors("AllowAngularDev");
+
+
+            builder.Services.AddScoped<IUserExamResultService, UserExamResultService>();
+
+
+            var app = builder.Build();
+
+
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
