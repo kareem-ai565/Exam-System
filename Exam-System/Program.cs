@@ -29,7 +29,7 @@ namespace Exam_System
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<ExamSysContext>(op => op.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
-
+            
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddAuthentication(options =>
             {
@@ -65,9 +65,17 @@ namespace Exam_System
             builder.Services.AddScoped<IQuestionService,QuestionService>();
             builder.Services.AddScoped<IUnitOfWork, Exam_System.UnitOfWork.UnitOfWork>();
             builder.Services.AddScoped(typeof(IGenericRepo<>), typeof(GenericRepo<>));
-
-            var app = builder.Build();
-
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAngularDev", policy =>
+                {
+                    policy.WithOrigins("http://localhost:4200")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
+            });
+                var app = builder.Build();
+            app.UseCors("AllowAngularDev");
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
