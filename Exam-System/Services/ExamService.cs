@@ -15,7 +15,7 @@ namespace Exam_System.Services
         }
 
 
-        public async Task<int> AddAsync(AddExamDto exam)
+        public async Task<int> AddAsync(AddUpdateExamDto exam)
         {
             
             var entity = new Exam()
@@ -43,15 +43,31 @@ namespace Exam_System.Services
                 Id = exam.Id,
                 Title = exam.Title,
                 Description = exam.Description,
-                CreatedAt=exam.CreatedAt
+                CreatedAt=exam.CreatedAt,
+                UserId = exam.UserId
             };
         }
 
         
 
-        public async Task<IEnumerable<Exam>> GetExamsAsync()=>await _unitOfWork.ExamRepo.GetAllAsync();
+        public async Task<IEnumerable<ExamDto>> GetExamsAsync()
+        {
+            var exams =  await _unitOfWork.ExamRepo.GetAllAsync();
+            var result = new List<ExamDto>();
+            foreach(var exam in exams)
+            {
+                result.Add(new ExamDto() { 
+                    Id = exam.Id,
+                    Title = exam.Title,
+                    Description = exam.Description,
+                    CreatedAt = exam.CreatedAt,
+                    UserId = exam.UserId
+                });
+            }
+            return result;
+        }
 
-        public async Task<int> UpdateExam(UpdateExamDto updateExamDto, int id)
+        public async Task<int> UpdateExam(AddUpdateExamDto updateExamDto, int id)
         {
             var exam = await _unitOfWork.ExamRepo.GetByIdAsync(id);
             exam.Title = updateExamDto.Title;
