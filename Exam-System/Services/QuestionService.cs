@@ -30,6 +30,7 @@ namespace Exam_System.Services
                     ExamId = question.ExamId,
                     Choises = question.Choises.Select(c => new ChoiceDto
                     {
+                        Id = c.Id,
                         ChoiseText = c.ChoiseText,
                         IsCorrect = c.IsCorrect
                     }).ToList()
@@ -53,6 +54,7 @@ namespace Exam_System.Services
                 ExamId = question.ExamId,
                 Choises = question.Choises.Select(c => new ChoiceDto
                 {
+                    Id = c.Id,
                     ChoiseText = c.ChoiseText,
                     IsCorrect = c.IsCorrect
                 }).ToList()
@@ -98,6 +100,7 @@ namespace Exam_System.Services
                     ExamId = question.ExamId,
                     Choises = question.Choises.Select(c => new ChoiceDto
                     {
+                        Id=c.Id,
                         ChoiseText = c.ChoiseText,
                         IsCorrect = c.IsCorrect
                     }).ToList()
@@ -127,5 +130,7 @@ namespace Exam_System.Services
             };
             return UnitOfWork.SaveChangesAsync();
         }
+
+       
     }
 }

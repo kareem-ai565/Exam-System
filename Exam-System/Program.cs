@@ -65,6 +65,7 @@ namespace Exam_System
             builder.Services.AddScoped<IUnitOfWork, Exam_System.UnitOfWork.UnitOfWork>();
             builder.Services.AddScoped(typeof(IGenericRepo<>), typeof(GenericRepo<>));
 
+            builder.Services.AddScoped<IUserExamResultService, UserExamResultService>();
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowAngularDev", policy =>
@@ -78,10 +79,9 @@ namespace Exam_System
             app.UseCors("AllowAngularDev");
 
 
-            builder.Services.AddScoped<IUserExamResultService, UserExamResultService>();
 
 
-            var app = builder.Build();
+          
 
 
             // Configure the HTTP request pipeline.
