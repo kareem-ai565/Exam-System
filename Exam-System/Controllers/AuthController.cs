@@ -62,22 +62,19 @@ namespace Exam_System.Controllers
 
         [HttpPost("logout")]
         [Authorize]
-        public async Task<IActionResult> Logout([FromBody] logoutDTO logoutDTO)
+        public IActionResult Logout()
         {
-            var result = await _authService.Asynclogout(logoutDTO);
-            return Ok(result);
+            Response.Cookies.Append("jwt", "", new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Lax,
+                Expires = DateTime.UtcNow.AddDays(-1)
+            });
+
+            return Ok(new { message = "Logged out successfully" });
         }
 
-        [HttpPost("create-role")]
-        public async Task<IActionResult> CreateRole([FromBody] CreateRoleDto model)
-        {
-            var (success, message) = await _authService.CreateRoleAsync(model.RoleName);
-
-            if (success)
-                return Ok(message);
-
-            return BadRequest(message);
-        }
         [Authorize]
         [HttpGet("me")]
         public async Task<IActionResult> Me()

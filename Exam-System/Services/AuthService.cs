@@ -47,14 +47,14 @@ namespace Exam_System.Services
             return token;
         }
 
-        public Task<AuthResult> Asynclogout(logoutDTO logoutDTO)
-        {
-            return Task.FromResult(new AuthResult
-            {
-                Successed = true,
-                Message = "Logout Successful"
-            });
-        }
+        //public Task<AuthResult> Asynclogout(logoutDTO logoutDTO)
+        //{
+        //    return Task.FromResult(new AuthResult
+        //    {
+        //        Successed = true,
+        //        Message = "Logout Successful"
+        //    });
+        //}
 
         public async Task<AuthResult> Asyncregister(RegisterDTO registerDTO)
         {
