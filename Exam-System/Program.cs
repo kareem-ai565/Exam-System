@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Exam_System.Database.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace Exam_System
 {
@@ -28,6 +30,9 @@ namespace Exam_System
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<ExamSysContext>(op => op.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+
+            builder.Services.AddIdentity<User, IdentityRole<Guid>>().AddEntityFrameworkStores<ExamSysContext>()
+                .AddDefaultTokenProviders();
             
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddAuthentication(options =>
@@ -61,7 +66,9 @@ namespace Exam_System
 
 
             builder.Services.AddScoped<IExamService,ExamService>();
+
             builder.Services.AddScoped<IQuestionService,QuestionService>();
+
             builder.Services.AddScoped<IUnitOfWork, Exam_System.UnitOfWork.UnitOfWork>();
             builder.Services.AddScoped(typeof(IGenericRepo<>), typeof(GenericRepo<>));
 
