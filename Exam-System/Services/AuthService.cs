@@ -16,7 +16,17 @@ namespace Exam_System.Services
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly IConfiguration configuration;
-        
+
+        public AuthService(
+            UserManager<User> userManager,
+            SignInManager<User> signInManager,
+            IConfiguration configuration)
+        {
+            _userManager = userManager;
+            _signInManager = signInManager;
+            this.configuration = configuration;
+        }
+
 
         public async Task<AuthResult> Asynclogin(loginDTO loginDTO)
         {
@@ -82,7 +92,7 @@ namespace Exam_System.Services
         {
             var authClaims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
