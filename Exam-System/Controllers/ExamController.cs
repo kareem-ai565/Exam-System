@@ -1,11 +1,13 @@
 ﻿using Exam_System.Database.Models;
 using Exam_System.Dtos;
 using Exam_System.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Exam_System.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize(Roles = "Admin")]
     [ApiController]
     public class ExamController : ControllerBase
     {

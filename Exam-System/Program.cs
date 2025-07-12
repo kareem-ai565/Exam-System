@@ -52,6 +52,19 @@ namespace Exam_System
                     ValidAudience = configuration["Jwt:Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"])),
                     ClockSkew = TimeSpan.Zero
+
+                };
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var token = context.Request.Cookies["jwt"];
+                        if (!string.IsNullOrEmpty(token))
+                        {
+                            context.Token = token;
+                        }
+                        return Task.CompletedTask;
+                    }
                 };
 
             });
@@ -77,7 +90,7 @@ namespace Exam_System
             {
                 options.AddPolicy("AllowAngularDev", policy =>
                 {
-                    policy.WithOrigins("http://localhost:4200")
+                    policy.WithOrigins("http://localhost:4200").AllowCredentials()
                           .AllowAnyHeader()
                           .AllowAnyMethod();
                 });

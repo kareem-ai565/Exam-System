@@ -9,7 +9,8 @@ namespace Exam_System.Services.Interfaces
     public interface IAuthService
     {
         Task<AuthResult>Asynclogin(loginDTO loginDTO);
-        Task<AuthResult> Asynclogout(logoutDTO logoutDTO);
+        //Task<AuthResult> Asynclogout(logoutDTO logoutDTO);
         Task<AuthResult>Asyncregister(RegisterDTO registerDTO);
+        Task<(bool Success, string Message)> CreateRoleAsync(string roleName);
     }
 }
