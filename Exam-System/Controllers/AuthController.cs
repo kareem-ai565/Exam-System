@@ -89,7 +89,7 @@ namespace Exam_System.Controllers
             var roles = User.FindAll(ClaimTypes.Role).Select(r => r.Value).ToList();
             return Ok(new
             {
-                UserId = Guid.Parse(userId),
+                Id = Guid.Parse(userId),
                 Email = email,
                 Role = roles,
                 Username = userName
