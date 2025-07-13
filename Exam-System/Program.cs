@@ -1,16 +1,17 @@
 
 using Exam_System.Database.Context;
-
-
 using Exam_System.Repositories;
 using Exam_System.Repositories.Interfaces;
 using Exam_System.Services;
+using Exam_System.Services.Implementations;
 using Exam_System.Services.Interfaces;
 using Exam_System.UnitOfWork;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Exam_System.Database.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace Exam_System
 {
@@ -30,6 +31,9 @@ namespace Exam_System
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<ExamSysContext>(op => op.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 
+            builder.Services.AddIdentity<User, IdentityRole<Guid>>().AddEntityFrameworkStores<ExamSysContext>()
+                .AddDefaultTokenProviders();
+            
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddAuthentication(options =>
             {
@@ -48,6 +52,19 @@ namespace Exam_System
                     ValidAudience = configuration["Jwt:Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"])),
                     ClockSkew = TimeSpan.Zero
+
+                };
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var token = context.Request.Cookies["jwt"];
+                        if (!string.IsNullOrEmpty(token))
+                        {
+                            context.Token = token;
+                        }
+                        return Task.CompletedTask;
+                    }
                 };
 
             });
@@ -62,11 +79,30 @@ namespace Exam_System
 
 
             builder.Services.AddScoped<IExamService,ExamService>();
+
             builder.Services.AddScoped<IQuestionService,QuestionService>();
+
             builder.Services.AddScoped<IUnitOfWork, Exam_System.UnitOfWork.UnitOfWork>();
             builder.Services.AddScoped(typeof(IGenericRepo<>), typeof(GenericRepo<>));
 
-            var app = builder.Build();
+            builder.Services.AddScoped<IUserExamResultService, UserExamResultService>();
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAngularDev", policy =>
+                {
+                    policy.WithOrigins("http://localhost:4200").AllowCredentials()
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
+            });
+                var app = builder.Build();
+            app.UseCors("AllowAngularDev");
+
+
+
+
+          
+
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

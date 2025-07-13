@@ -1,11 +1,13 @@
 ﻿using Exam_System.Database.Models;
 using Exam_System.Dtos;
 using Exam_System.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Exam_System.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
     public class ExamController : ControllerBase
     {
@@ -29,33 +31,33 @@ namespace Exam_System.Controllers
         {
             var exam = await _examService.GetExamByIdAsync(id);
 
-            return exam!=null?Ok(exam):NotFound("No Exam Found");
+            return exam!=null?Ok(exam):NotFound();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(AddExamDto exam)
+        public async Task<IActionResult> Add(AddUpdateExamDto exam)
         {
             var result = await _examService.AddAsync(exam);
 
-            return result==0?BadRequest($"{result} rows affected"):Created();
+            return result==0?BadRequest():Created();
 
         }
 
         [HttpDelete]
 
-        public async Task<IActionResult> delete(int id)
+        public async Task<IActionResult> delete([FromQuery]int id)
         {   
            var result = await _examService.DeleteExamAsync(id);
-            return result == 0 ? BadRequest($"{result} rows affected") : Ok("Exam has been deleted");
+            return result == 0 ? BadRequest() : Ok();
 
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update([FromBody]UpdateExamDto exam,[FromQuery]int id)
+        public async Task<IActionResult> Update([FromBody] AddUpdateExamDto exam,[FromQuery]int id)
         {
            var result = await _examService.UpdateExam(exam, id);
 
-            return result == 0 ? BadRequest($"{result} rows affected") : Ok("Exam has been updated");
+            return result == 0 ? BadRequest() : Ok();
 
         }
         

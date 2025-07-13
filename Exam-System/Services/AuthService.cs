@@ -16,7 +16,20 @@ namespace Exam_System.Services
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly IConfiguration configuration;
-        
+        private readonly RoleManager<IdentityRole<Guid>> _roleManager;
+
+        public AuthService(
+            UserManager<User> userManager,
+            SignInManager<User> signInManager,
+            IConfiguration configuration,
+            RoleManager<IdentityRole<Guid>> roleManager)
+        {
+            _userManager = userManager;
+            _signInManager = signInManager;
+            this.configuration = configuration;
+            this._roleManager = roleManager;
+        }
+
 
         public async Task<AuthResult> Asynclogin(loginDTO loginDTO)
         {
@@ -34,14 +47,14 @@ namespace Exam_System.Services
             return token;
         }
 
-        public Task<AuthResult> Asynclogout(logoutDTO logoutDTO)
-        {
-            return Task.FromResult(new AuthResult
-            {
-                Successed = true,
-                Message = "Logout Successful"
-            });
-        }
+        //public Task<AuthResult> Asynclogout(logoutDTO logoutDTO)
+        //{
+        //    return Task.FromResult(new AuthResult
+        //    {
+        //        Successed = true,
+        //        Message = "Logout Successful"
+        //    });
+        //}
 
         public async Task<AuthResult> Asyncregister(RegisterDTO registerDTO)
         {
@@ -78,12 +91,30 @@ namespace Exam_System.Services
 
         }
 
+        public async Task<(bool Success, string Message)> CreateRoleAsync(string roleName)
+        {
+            if (string.IsNullOrWhiteSpace(roleName))
+                return (false, "Role name cannot be empty.");
+
+            var roleExists = await _roleManager.RoleExistsAsync(roleName);
+            if (roleExists)
+                return (false, $"Role '{roleName}' already exists.");
+
+            var result = await _roleManager.CreateAsync(new IdentityRole<Guid>(roleName));
+            if (result.Succeeded)
+                return (true, $"Role '{roleName}' created successfully.");
+
+            var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+            return (false, $"Failed to create role: {errors}");
+        }
+
         private AuthResult GenerateJwtToken(User user, IList<string> roles)
         {
             var authClaims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
             foreach (var role in roles)
