@@ -91,13 +91,21 @@ namespace Exam_System.Controllers
             {
                 UserId = Guid.Parse(userId),
                 Email = email,
-                Roles = roles,
+                Role = roles,
                 Username = userName
             });
 
 
+        }
+        [HttpPost]
+        public async Task<IActionResult> CreateRole([FromBody] CreateRoleDto model)
+        {
+            var (success, message) = await _authService.CreateRoleAsync(model.RoleName);
 
+            if (success)
+                return Ok(message);
 
+            return BadRequest(message);
         }
     }
 }
