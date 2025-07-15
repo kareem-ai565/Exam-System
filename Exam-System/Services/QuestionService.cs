@@ -109,28 +109,63 @@ namespace Exam_System.Services
 
             return results;
         }
-
         public async Task<int> DeleteQuestionAsync(int id)
         {
+            var question = await UnitOfWork.QuestionRepo.GetByIdAsync(id);
+
+            if (question == null)
+                throw new ArgumentException($"Entity with ID {id} not found");
+
             await UnitOfWork.QuestionRepo.Delete(id);
             return await UnitOfWork.SaveChangesAsync();
         }
 
-        public Task<int> UpdateQuestion(QuestionDto questionDto)
+        //public async Task<int> DeleteQuestionAsync(int id)
+        //{
+        //    await UnitOfWork.QuestionRepo.Delete(id);
+        //    return await UnitOfWork.SaveChangesAsync();
+        //}
+
+        //public Task<int> UpdateQuestion(int id, QuestionDto questionDto)
+        //{
+        //    var question = new Question
+        //    {
+        //        Id = questionDto.Id,
+        //        QuestionText = questionDto.QuestionText,
+        //        Choises = questionDto.Choises.Select(c => new Choice
+        //        {
+        //            ChoiseText = c.ChoiseText,
+        //            IsCorrect = c.IsCorrect
+        //        }).ToList()
+        //    };
+        //    return UnitOfWork.SaveChangesAsync();
+        //}
+
+        public async Task<int> UpdateQuestion(int id, QuestionDto questionDto)
         {
-            var question = new Question
+            // Step 1: Fetch the question including its choices
+            var existingQuestion = await UnitOfWork.QuestionRepo.GetByIdAsync(id);
+
+            if (existingQuestion == null)
+                return 0; // Not found
+
+            // Step 2: Update question text
+            existingQuestion.QuestionText = questionDto.QuestionText;
+
+            // Step 3: Replace old choices
+            existingQuestion.Choises.Clear();
+            foreach (var choiceDto in questionDto.Choises)
             {
-                Id = questionDto.Id,
-                QuestionText = questionDto.QuestionText,
-                Choises = questionDto.Choises.Select(c => new Choice
+                existingQuestion.Choises.Add(new Choice
                 {
-                    ChoiseText = c.ChoiseText,
-                    IsCorrect = c.IsCorrect
-                }).ToList()
-            };
-            return UnitOfWork.SaveChangesAsync();
+                    ChoiseText = choiceDto.ChoiseText,
+                    IsCorrect = choiceDto.IsCorrect
+                });
+            }
+
+            // Step 4: Save changes
+            return await UnitOfWork.SaveChangesAsync();
         }
 
-       
     }
 }

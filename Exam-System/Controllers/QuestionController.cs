@@ -62,22 +62,69 @@ namespace Exam_System.Controllers
             return questions != null ? Ok(questions) : NotFound("No Questions Found for this Exam");
         }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateQuestion([FromBody] QuestionDto question)
+        //[HttpPut("{id:int}")]
+        //public async Task<IActionResult> UpdateQuestion(int id, [FromBody] QuestionDto question)
+        //{
+        //    if (question == null)
+        //    {
+        //        return BadRequest("Question cannot be null");
+        //    }
+        //    var result = await _questionService.UpdateQuestion(id, question);
+        //    return result > 0 ? Ok("Question has been updated") : BadRequest("Failed to update question");
+        //}
+
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> UpdateQuestion(int id, [FromBody] QuestionDto question)
         {
-            if (question == null)
-            {
-                return BadRequest("Question cannot be null");
-            }
-            var result = await _questionService.UpdateQuestion(question);
-            return result > 0 ? Ok("Question has been updated") : BadRequest("Failed to update question");
+            var result = await _questionService.UpdateQuestion(id, question);
+
+            if (result == null)
+                return NotFound(new { success = false, message = "Question not found" });
+
+            return Ok(new { success = true, message = "Question has been updated" });
         }
 
+        //[HttpPut("{id:int}")]
+        //public async Task<IActionResult> UpdateQuestion(int id, [FromBody] QuestionDto question)
+        //{
+        //    if (question == null)
+        //    {
+        //        return BadRequest("Question cannot be null");
+        //    }
+
+        //    var result = await _questionService.UpdateQuestion(id, question);
+
+        //    return result > 0
+        //        ? Ok("Question has been updated")
+        //        : BadRequest("Failed to update question");
+        //}
+
+        //[HttpDelete]
+        //public async Task<IActionResult> DeleteQuestion(int id)
+        //{
+        //    var result = await _questionService.DeleteQuestionAsync(id);
+        //    return result > 0 ? Ok("Question has been deleted") : BadRequest($"Failed to delete question: {result} rows affected");
+        //}
+
         [HttpDelete]
-        public async Task<IActionResult> DeleteQuestion(int id)
+        public async Task<IActionResult> delete([FromQuery] int id)
         {
-            var result = await _questionService.DeleteQuestionAsync(id);
-            return result > 0 ? Ok("Question has been deleted") : BadRequest($"Failed to delete question: {result} rows affected");
+            try
+            {
+                var result = await _questionService.DeleteQuestionAsync(id);
+                return result == 0
+                    ? NotFound("No question deleted")
+                    : Ok(new { success = true });
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(new { success = false, message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = "Server error", error = ex.Message });
+            }
         }
+
     }
 }
