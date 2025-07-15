@@ -10,7 +10,7 @@ namespace Exam_System.Services.Interfaces
         public Task<int> Add(QuestionDto questionDto);
 
         public Task<int> DeleteQuestionAsync(int questionid);
-        public Task<int> UpdateQuestion(QuestionDto questionDto);
+        public Task<int> UpdateQuestion(int id,QuestionDto questionDto);
 
         public Task<IEnumerable<QuestionDto>> GetQuestionsByExamIdAsync(int examId);
     }
